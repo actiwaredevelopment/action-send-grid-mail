@@ -14,6 +14,13 @@ public class Program
 
         var templateData = Environment.GetEnvironmentVariable("TEMPLATE_DATA");
 
+        Console.WriteLine("[DBG]: Environment variables:");
+        Console.WriteLine("-> TOKEN: *********");
+        Console.WriteLine("-> TEMPLATE_ID: " + templateId);
+        Console.WriteLine("-> SENDER_MAIL: " + sender);
+        Console.WriteLine("-> SEND_TO: " + sendTo);
+        Console.WriteLine("-> ARGS: " + string.Join(", ", args));
+
         var data = new System.Collections.Generic.Dictionary<string, string>();
 
         Console.WriteLine("[INF]: Preparing mail data...");

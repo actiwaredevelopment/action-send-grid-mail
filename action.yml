@@ -33,6 +33,9 @@ outputs:
 runs:
     using: 'docker'
     image: 'docker://actiwareio/github-action-send-grid:latest'
+    env:
+        - TOKEN=${{ inputs.TOKEN }}
+        - TEMPLATE_ID=${{ inputs.TOKEN }}
 
 branding:
     icon: 'at-sign'
