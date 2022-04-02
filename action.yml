@@ -34,15 +34,15 @@ runs:
     using: 'docker'
     image: 'docker://actiwareio/github-action-send-grid:latest'
     args:
-        - '-token'
+        - '--token'
         - ${{ inputs.TOKEN }}
-        - '-template-id'
+        - '--template-id'
         - ${{ inputs.TEMPLATE_ID }}
-        - '-sender-mail'
+        - '--sender-mail'
         - ${{ inputs.SENDER_MAIL }}
-        - '-send-to'
+        - '--send-to'
         - ${{ inputs.SEND_TO }}
-        - '-template-data'
+        - '--template-data'
         - ${{ inputs.TEMPLATE_DATA }}
 
 branding:
