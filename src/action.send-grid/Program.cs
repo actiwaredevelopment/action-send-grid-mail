@@ -72,11 +72,13 @@ static async System.Threading.Tasks.Task StartActionAsync(ActionInputs inputs)
 
     var response = await client.SendEmailAsync(message);
 
-    if (response.StatusCode != System.Net.HttpStatusCode.OK)
+    if (response.IsSuccessStatusCode == false)
     {
+        var body = await response?.Body?.ReadAsStringAsync();
+
         Console.WriteLine($"[ERR]: Sending mail failed.");
         Console.WriteLine($"[ERR]: Status code: {response?.StatusCode}");
-        Console.WriteLine($"[ERR]: Body: {response?.Body}");
+        Console.WriteLine($"[ERR]: Body: {body ?? ""}");
 
         Environment.Exit(1);
         return;
