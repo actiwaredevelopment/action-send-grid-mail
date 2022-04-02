@@ -12,7 +12,7 @@ jobs:
               uses: actiwaredevelopment/action-send-grid-mail@main
               with:
                   TOKEN: ${{ secrets.SEND_GRID_TOKEN }}
-                  TEMPLATE_ID: 'd-ec4fb5e968ff4e6992b604f265e8492f'
-                  SENDER_MAIL: 'development@actiware-development.com'
-                  SEND_TO: 'mathias.herhold@actiware-development.com'
-                  TEMPLATE_DATA: setup=Solr Module;version=2.0.0.0402
+                  TEMPLATE_ID: 'TEMPLATE-ID'
+                  SENDER_MAIL: 'test@test.com'
+                  SEND_TO: 'test@test.com'
+                  TEMPLATE_DATA: setup=Module;version=2.0.0.0402
