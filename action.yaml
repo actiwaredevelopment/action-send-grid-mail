@@ -1,0 +1,39 @@
+name: 'ACTIWARE-SEND-GRID-TEMPLATE-MAIL'
+description: 'Send a mail with sendgrid + template'
+inputs:
+    TOKEN:
+        description: 'apikey for sendgrif'
+        required: true
+        type: string
+        default: ''
+    TEMPLATE_ID:
+        description: 'sendgrid template id '
+        required: true
+        type: string
+        default: ''
+    SENDER_MAIL:
+        description: 'sender for the mail'
+        required: true
+        type: string
+        default: ''
+    SEND_TO:
+        description: 'receipients comma-separated'
+        required: true
+        type: string
+        default: ''
+    TEMPLATE_DATA:
+        description: 'data as key=value semicolon-separated'
+        required: true
+        default: ''
+
+outputs:
+    time: # id of output
+        description: 'The time we greeted you'
+
+runs:
+    using: 'docker'
+    image: 'docker://actiwareio/github-action-send-grid:latest'
+
+branding:
+    icon: 'at-sign'
+    color: 'blue'
