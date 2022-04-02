@@ -9,7 +9,7 @@ jobs:
 
         steps:
             - name: Send Mail to QA
-              uses: actiwaredevelopment/action-send-grid-mail@v0.1
+              uses: actiwaredevelopment/action-send-grid-mail@main
               with:
                   TOKEN: ${{ secrets.SEND_GRID_TOKEN }}
                   TEMPLATE_ID: 'd-ec4fb5e968ff4e6992b604f265e8492f'
