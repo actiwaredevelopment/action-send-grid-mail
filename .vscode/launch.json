@@ -1,0 +1,31 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/action.send-grid/bin/Debug/net6.0/actiware-send-grid.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/action.send-grid",
+            "console": "integratedTerminal",
+            "env": {
+                "TOKEN": "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",
+                "TEMPLATE_ID": "d-ec4fb5e968ff4e6992b604f265e8492f",
+                "SENDER_MAIL": "development@actiware-development.com",
+                "SEND_TO": "mathias.herhold@actiware-development.com",
+                "TEMPLATE_DATA": "setup=Solr Module;version=2.0.0.0402"
+            },
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}

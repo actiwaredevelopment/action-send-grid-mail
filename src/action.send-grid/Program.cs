@@ -39,6 +39,8 @@ public class Program
                         Console.WriteLine($"[WRN]: Invalid template data: {value}");
                         continue;
                     }
+
+                    data.Add(parts[0], parts[1] ?? "");
                 }
             }
         }
@@ -80,7 +82,17 @@ public class Program
 
         var client = new SendGrid.SendGridClient(token);
 
-        await client.SendEmailAsync(message);
+        var response = await client.SendEmailAsync(message);
+
+        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        {
+            Console.WriteLine($"[ERR]: Sending mail failed.");
+            Console.WriteLine($"[ERR]: Status code: {response?.StatusCode}");
+            Console.WriteLine($"[ERR]: Body: {response?.Body}");
+
+            Environment.Exit(1);
+            return;
+        }
 
         Console.WriteLine("[INF]: Mail sent.");
     }
