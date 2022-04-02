@@ -7,52 +7,46 @@ public class Program
 {
     static async System.Threading.Tasks.Task Main(string[] args)
     {
-        var token = Environment.GetEnvironmentVariable("TOKEN");
-        var templateId = Environment.GetEnvironmentVariable("TEMPLATE_ID");
-        var sender = Environment.GetEnvironmentVariable("SENDER_MAIL");
-        var sendTo = Environment.GetEnvironmentVariable("SEND_TO");
+        var parser = Default.ParseArguments<ActionInputs>(() => new(), args);
 
-        var templateData = Environment.GetEnvironmentVariable("TEMPLATE_DATA");
+        parser.WithNotParsed(
+            errors =>
+            {
+                Console.WriteLine($"[Err]: {string.Join(Environment.NewLine, errors.Select(error => error.ToString()))}");
 
+                Environment.Exit(2);
+            });
+
+        await parser.WithParsedAsync(options => StartActionAsync(options));
+    }
+
+    static async System.Threading.Tasks.Task StartActionAsync(ActionInputs inputs)
+    {
         Console.WriteLine("[DBG]: Environment variables:");
         Console.WriteLine("-> TOKEN: *********");
-        Console.WriteLine("-> TEMPLATE_ID: " + templateId);
-        Console.WriteLine("-> SENDER_MAIL: " + sender);
-        Console.WriteLine("-> SEND_TO: " + sendTo);
-        Console.WriteLine("-> ARGS: " + string.Join(", ", args));
+        Console.WriteLine($"-> TEMPLATE_ID: {inputs?.TemplateId}");
+        Console.WriteLine($"-> SENDER_MAIL: {inputs?.SenderMail}");
+        Console.WriteLine($"-> SEND_TO: {inputs?.SendsTo}");
 
-        var data = new System.Collections.Generic.Dictionary<string, string>();
-
-        Console.WriteLine("[INF]: Preparing mail data...");
-
-        if (string.IsNullOrWhiteSpace(templateData) == false)
+        if (inputs?.Data != null)
         {
-            var values = templateData.Split(';', StringSplitOptions.RemoveEmptyEntries);
-
-            if (values == null ||
-                values.Length == 0)
+            foreach (var item in inputs.Data)
             {
-                Console.WriteLine("[WRN]: No template data was given.");
-            }
-            else
-            {
-                foreach (var value in values)
-                {
-                    var parts = value.Split('=');
-
-                    if (parts == null ||
-                        parts.Length != 2)
-                    {
-                        Console.WriteLine($"[WRN]: Invalid template data: {value}");
-                        continue;
-                    }
-
-                    data.Add(parts[0], parts[1] ?? "");
-                }
+                Console.WriteLine($"-> {item.Key}: {item.Value}");
             }
         }
 
-        if (string.IsNullOrWhiteSpace(sendTo) == true)
+        Console.WriteLine("[INF]: Preparing mail data...");
+
+        if (string.IsNullOrWhiteSpace(inputs?.Token) == true)
+        {
+            Console.WriteLine("[ERR]: No token were given.");
+
+            Environment.Exit(1);
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(inputs?.SendsTo) == true)
         {
             Console.WriteLine("[ERR]: No receipients were given.");
 
@@ -60,19 +54,28 @@ public class Program
             return;
         }
 
-        var receipients = sendTo.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).ToArray();
+        var receipients = inputs?.SendsTo.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).ToArray();
 
         // Create new message
         var message = new SendGrid.Helpers.Mail.SendGridMessage();
 
         // Set template id
-        message.SetTemplateId(templateId);
+        message.SetTemplateId(inputs?.TemplateId);
         // Set template data
-        message.SetTemplateData(data);
+        message.SetTemplateData(inputs?.Data);
 
         // Set from and public to address
-        message.SetFrom(new SendGrid.Helpers.Mail.EmailAddress(sender));
-        message.AddTo(new SendGrid.Helpers.Mail.EmailAddress(sender));
+        message.SetFrom(new SendGrid.Helpers.Mail.EmailAddress(inputs?.SenderMail));
+        message.AddTo(new SendGrid.Helpers.Mail.EmailAddress(inputs?.SenderMail));
+
+        if (receipients == null ||
+            receipients.Length == 0)
+        {
+            Console.WriteLine("[ERR]: No receipients were given.");
+
+            Environment.Exit(1);
+            return;
+        }
 
         // Set receipients as bcc
         foreach (var receipient in receipients)
@@ -87,7 +90,7 @@ public class Program
             message.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(receipient));
         }
 
-        var client = new SendGrid.SendGridClient(token);
+        var client = new SendGrid.SendGridClient(inputs?.Token);
 
         var response = await client.SendEmailAsync(message);
 

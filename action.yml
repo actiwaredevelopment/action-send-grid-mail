@@ -2,7 +2,7 @@ name: 'ACTIWARE-SEND-GRID-TEMPLATE-MAIL'
 description: 'Send a mail with sendgrid + template'
 inputs:
     TOKEN:
-        description: 'apikey for sendgrif'
+        description: 'apikey for sendgrid'
         required: true
         type: string
         default: ''
@@ -42,6 +42,7 @@ runs:
         - ${{ inputs.SENDER_MAIL }}
         - '-send-to'
         - ${{ inputs.SEND_TO }}
+        - '-template-data'
         - ${{ inputs.TEMPLATE_DATA }}
 
 branding:

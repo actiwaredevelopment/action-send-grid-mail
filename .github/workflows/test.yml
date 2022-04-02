@@ -15,6 +15,4 @@ jobs:
                   TEMPLATE_ID: 'd-ec4fb5e968ff4e6992b604f265e8492f'
                   SENDER_MAIL: 'development@actiware-development.com'
                   SEND_TO: 'mathias.herhold@actiware-development.com'
-                  TEMPLATE_DATA: |
-                      -setup "Solr Module"
-                      -version "2.0.0.0402"
+                  TEMPLATE_DATA: setup=Solr Module;version=2.0.0.0402
