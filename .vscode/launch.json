@@ -14,7 +14,7 @@
             "cwd": "${workspaceFolder}/src/action.send-grid",
             "console": "integratedTerminal",
             "env": {
-                "TOKEN": "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",
+                "TOKEN": "",
                 "TEMPLATE_ID": "d-ec4fb5e968ff4e6992b604f265e8492f",
                 "SENDER_MAIL": "development@actiware-development.com",
                 "SEND_TO": "mathias.herhold@actiware-development.com",
