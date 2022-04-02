@@ -1,7 +1,7 @@
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/runtime:6.0 as base
+FROM mcr.microsoft.com/dotnet/runtime:6.0-bullseye-slim-amd64 as base
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0-bullseye-slim-amd64 AS build
 
 WORKDIR /src
 COPY . .
