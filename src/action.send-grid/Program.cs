@@ -5,6 +5,9 @@ static async System.Threading.Tasks.Task StartActionAsync(ActionInputs inputs)
     Console.WriteLine($"-> TEMPLATE_ID: {inputs?.TemplateId}");
     Console.WriteLine($"-> SENDER_MAIL: {inputs?.SenderMail}");
     Console.WriteLine($"-> SEND_TO: {inputs?.SendsTo}");
+    Console.WriteLine($"-> POWER_AUTOMATE_FLOW: {inputs?.PowerAutomateFlow}");
+
+    var flowAddress = inputs?.PowerAutomateFlow;
 
     if (inputs?.Data != null)
     {
@@ -16,65 +19,22 @@ static async System.Threading.Tasks.Task StartActionAsync(ActionInputs inputs)
 
     Console.WriteLine("[INF]: Preparing mail data...");
 
-    if (string.IsNullOrWhiteSpace(inputs?.Token) == true)
+    if (string.IsNullOrWhiteSpace(inputs?.PowerAutomateFlow) == true)
     {
-        Console.WriteLine("[ERR]: No token were given.");
-
-        Environment.Exit(1);
-        return;
+        Console.WriteLine("[INF]: Use default power automate flow.");
+        flowAddress = "https://defaultd973cdf80eb442efac5b76642b0418.86.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6440ca54561449febe4c8ab340c4a396/triggers/manual/paths/invoke/?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=OxcFCKwtPhseqAnU1BckfL_COZhF9VddlwoNhVUWL0o";
     }
 
-    if (string.IsNullOrWhiteSpace(inputs?.SendsTo) == true)
-    {
-        Console.WriteLine("[ERR]: No receipients were given.");
+    var client = new HttpClient();
+    var request = new HttpRequestMessage(HttpMethod.Post, flowAddress);
+    var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(inputs?.Data), null, "application/json");
+    request.Content = content;
 
-        Environment.Exit(1);
-        return;
-    }
-
-    var receipients = inputs?.SendsTo.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries).ToArray();
-
-    // Create new message
-    var message = new SendGrid.Helpers.Mail.SendGridMessage();
-
-    // Set template id
-    message.SetTemplateId(inputs?.TemplateId);
-    // Set template data
-    message.SetTemplateData(inputs?.Data);
-
-    // Set from and public to address
-    message.SetFrom(new SendGrid.Helpers.Mail.EmailAddress(inputs?.SenderMail));
-    message.AddTo(new SendGrid.Helpers.Mail.EmailAddress(inputs?.SenderMail));
-
-    if (receipients == null ||
-        receipients.Length == 0)
-    {
-        Console.WriteLine("[ERR]: No receipients were given.");
-
-        Environment.Exit(1);
-        return;
-    }
-
-    // Set receipients as bcc
-    foreach (var receipient in receipients)
-    {
-        if (string.IsNullOrWhiteSpace(receipient) == true ||
-            receipient.Contains("@") == false)
-        {
-            Console.WriteLine($"[WRN]: Invalid receipient: {receipient}");
-            continue;
-        }
-
-        message.AddBcc(new SendGrid.Helpers.Mail.EmailAddress(receipient));
-    }
-
-    var client = new SendGrid.SendGridClient(inputs?.Token);
-
-    var response = await client.SendEmailAsync(message);
+    var response = await client.SendAsync(request);
 
     if (response.IsSuccessStatusCode == false)
     {
-        var body = await response?.Body?.ReadAsStringAsync();
+        var body = await response.Content.ReadAsStringAsync();
 
         Console.WriteLine($"[ERR]: Sending mail failed.");
         Console.WriteLine($"[ERR]: Status code: {response?.StatusCode}");
@@ -88,12 +48,11 @@ static async System.Threading.Tasks.Task StartActionAsync(ActionInputs inputs)
 }
 
 var parser = Default.ParseArguments<ActionInputs>(() => new(), args);
-parser.WithNotParsed(
-    errors =>
-            {
-                Console.WriteLine($"[Err]: {string.Join(Environment.NewLine, errors.Select(error => error.ToString()))}");
+parser.WithNotParsed(errors =>
+{
+    Console.WriteLine($"[Err]: {string.Join(Environment.NewLine, errors.Select(error => error.ToString()))}");
 
-                Environment.Exit(2);
-            });
+    Environment.Exit(2);
+});
 
 await parser.WithParsedAsync(options => StartActionAsync(options));

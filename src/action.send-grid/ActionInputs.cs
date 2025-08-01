@@ -15,22 +15,27 @@ public class ActionInputs
     }
 
     [Option('t', "token",
-        Required = true,
+        Required = false,
         HelpText = "The api token, for the twillio send grid.")]
     public string Token { get; set; } = null!;
 
     [Option('i', "template-id",
-            Required = true,
+            Required = false,
             HelpText = "The identifier of the template.")]
     public string TemplateId { get; set; } = null!;
 
+    [Option('f', "flow",
+            Required = false,
+            HelpText = "The microsoft power automate flow address.")]
+    public string PowerAutomateFlow { get; set; } = null!;
+
     [Option('m', "sender-mail",
-            Required = true,
+            Required = false,
             HelpText = "The sender for the mail.")]
     public string SenderMail { get; set; } = null!;
 
     [Option('r', "send-to",
-            Required = true,
+            Required = false,
             HelpText = "The receipients comma-separated.")]
     public string SendsTo { get; set; } = null!;
 
